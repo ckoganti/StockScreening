@@ -110,9 +110,18 @@ export default function FilterPanel({ filters, setFilters, sectors = [], onRun, 
       </div>
 
       <style jsx>{`
-        .filter-panel { padding: 20px; border-radius: 18px; background: #f6f6f2; box-shadow: 0 6px 20px rgba(0,0,0,0.08); overflow: hidden; }
+        .filter-panel {
+          padding: 20px;
+          border-radius: 18px;
+          background: #f6f6f2;
+          box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+          max-height: calc(100vh - 32px);
+          overflow-y: auto;
+          overflow-x: hidden;
+          scrollbar-gutter: stable;
+        }
         h2 { margin-top: 0; font-size: 18px; }
-        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 18px; }
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 18px; align-content: start; }
         .filter-card { padding: 16px; border-radius: 16px; background: #fff; border: 1px solid rgba(0,0,0,0.05); }
         .card-label { display: block; font-weight: 600; margin-bottom: 10px; font-size: 13px; color: #444; }
         .two-inputs { display: flex; gap: 10px; align-items: center; }
