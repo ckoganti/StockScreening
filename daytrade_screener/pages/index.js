@@ -1,0 +1,80 @@
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import FilterPanel from '../components/FilterPanel'
+import StockTable from '../components/StockTable'
+
+export default function Home() {
+  const [stocks, setStocks] = useState([])
+  const [allStocks, setAllStocks] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [filters, setFilters] = useState({
+    volume: [0, 100000000],
+    priceRange: [0, 1000],
+    rsi: [0, 100],
+    relVolume: [0, 5],
+    signal: 'ALL',
+    rrRatio: [0, 10],
+    sector: 'ALL',
+    dateRange: ['', '']
+  })
+
+  useEffect(() => {
+    const fetchAllStocks = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const response = await axios.get('/api/stocks')
+        setAllStocks(response.data)
+        setStocks(response.data)
+      } catch (err) {
+        console.error('Error fetching stocks:', err)
+        setError('Failed to load stock data. Please check your API key configuration.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAllStocks()
+  }, [])
+
+  const applyFilters = () => {
+    const filtered = allStocks.filter(stock => {
+      const ipoDate = new Date(stock.ipoDate)
+      const startDate = filters.dateRange[0] ? new Date(filters.dateRange[0]) : null
+      const endDate = filters.dateRange[1] ? new Date(filters.dateRange[1]) : null
+
+      return (
+        stock.volume >= filters.volume[0] && stock.volume <= filters.volume[1] &&
+        stock.price >= filters.priceRange[0] && stock.price <= filters.priceRange[1] &&
+        stock.rsi >= filters.rsi[0] && stock.rsi <= filters.rsi[1] &&
+        stock.relVolume >= filters.relVolume[0] && stock.relVolume <= filters.relVolume[1] &&
+        (filters.signal === 'ALL' || stock.signal === filters.signal) &&
+        stock.rrRatio >= filters.rrRatio[0] && stock.rrRatio <= filters.rrRatio[1] &&
+        (filters.sector === 'ALL' || stock.sector === filters.sector) &&
+        (!startDate || ipoDate >= startDate) &&
+        (!endDate || ipoDate <= endDate)
+      )
+    })
+    setStocks(filtered)
+  }
+
+  useEffect(() => {
+    if (allStocks.length > 0) {
+      applyFilters()
+    }
+  }, [filters, allStocks])
+
+  if (loading) return <div>Loading...</div>
+  if (error) return <div>Error: {error}</div>
+
+  return (
+    <div className="container">
+      <h1>DayTrade Screener</h1>
+      <div className="layout">
+        <FilterPanel filters={filters} setFilters={setFilters} sectors={[...new Set(allStocks.map(s => s.sector))]} />
+        <StockTable stocks={stocks} />
+      </div>
+    </div>
+  )
+}
