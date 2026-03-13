@@ -112,6 +112,82 @@ a {
   overflow: hidden;
 }
 
+.results-column {
+  flex: 1;
+  display: grid;
+  gap: 12px;
+}
+
+.ai-brief {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+.ai-brief-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ai-brief h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.ai-btn {
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+  color: #fff;
+  font-weight: 700;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.ai-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ai-note {
+  margin: 10px 0 0;
+  color: var(--ink-500);
+  font-size: 0.85rem;
+}
+
+.ai-model {
+  margin: 8px 0 0;
+  color: var(--ink-700);
+  font-size: 0.85rem;
+}
+
+.ai-placeholder {
+  margin: 12px 0 0;
+  color: var(--ink-500);
+}
+
+.ai-error {
+  margin: 12px 0 0;
+  color: var(--sell);
+  font-weight: 600;
+}
+
+.ai-output {
+  margin: 12px 0 0;
+  white-space: pre-wrap;
+  font-family: inherit;
+  line-height: 1.45;
+  color: var(--ink-900);
+  background: #f8fcff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+}
+
 .table-header {
   display: flex;
   align-items: center;
@@ -232,6 +308,11 @@ a {
 @media (max-width: 980px) {
   .layout {
     flex-direction: column;
+  }
+
+  .ai-brief-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .filter-panel {

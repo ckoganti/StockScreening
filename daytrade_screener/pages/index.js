@@ -8,6 +8,10 @@ export default function Home() {
   const [allStocks, setAllStocks] = useState([])
   const [loading, setLoading] = useState(true)
   const [scanning, setScanning] = useState(false)
+  const [aiLoading, setAiLoading] = useState(false)
+  const [aiSummary, setAiSummary] = useState('')
+  const [aiModel, setAiModel] = useState('')
+  const [aiError, setAiError] = useState(null)
   const [error, setError] = useState(null)
   const [lastUpdated, setLastUpdated] = useState(null)
   const [filters, setFilters] = useState({
@@ -64,10 +68,29 @@ export default function Home() {
 
   const runScan = async () => {
     setScanning(true)
+    setAiError(null)
     applyFilters()
     // Simulate a small scan delay for UI feedback
     await new Promise((resolve) => setTimeout(resolve, 500))
     setScanning(false)
+  }
+
+  const generateAiInsights = async () => {
+    setAiLoading(true)
+    setAiError(null)
+    try {
+      const response = await axios.post('/api/ai-insights', {
+        stocks,
+        filters
+      })
+      setAiSummary(response.data.summary)
+      setAiModel(response.data.model)
+    } catch (err) {
+      const message = err?.response?.data?.error || 'Unable to generate AI insights'
+      setAiError(message)
+    } finally {
+      setAiLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -100,7 +123,28 @@ export default function Home() {
           onRun={runScan}
           scanning={scanning}
         />
-        <StockTable stocks={stocks} loading={loading || scanning} />
+        <div className="results-column">
+          <section className="ai-brief" aria-live="polite">
+            <div className="ai-brief-header">
+              <h2>AI Market Brief</h2>
+              <button
+                type="button"
+                className="ai-btn"
+                onClick={generateAiInsights}
+                disabled={aiLoading || loading || scanning || stocks.length === 0}
+              >
+                {aiLoading ? 'Generating...' : 'Generate with Llama 3.1 8B'}
+              </button>
+            </div>
+            <p className="ai-note">Uses OpenRouter model meta-llama/llama-3.1-8b-instruct</p>
+            {aiModel && <p className="ai-model">Model: {aiModel}</p>}
+            {aiError && <p className="ai-error">{aiError}</p>}
+            {!aiError && !aiSummary && <p className="ai-placeholder">Run AI brief to summarize momentum, risk, and watchlist from current filtered stocks.</p>}
+            {aiSummary && <pre className="ai-output">{aiSummary}</pre>}
+          </section>
+
+          <StockTable stocks={stocks} loading={loading || scanning} />
+        </div>
       </div>
     </div>
   )
