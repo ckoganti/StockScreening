@@ -3,6 +3,43 @@ import axios from 'axios'
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
 const DEFAULT_MODEL = 'meta-llama/llama-3.1-8b-instruct'
 
+function toInt(value) {
+  const num = Number(value)
+  return Number.isFinite(num) ? num : null
+}
+
+function formatRetryWindow(retryAfterSeconds) {
+  if (!retryAfterSeconds || retryAfterSeconds <= 0) {
+    return 'in a little while'
+  }
+
+  if (retryAfterSeconds < 60) {
+    return `in ${Math.ceil(retryAfterSeconds)} seconds`
+  }
+
+  const minutes = Math.ceil(retryAfterSeconds / 60)
+  if (minutes < 60) {
+    return `in ${minutes} minute${minutes === 1 ? '' : 's'}`
+  }
+
+  const hours = Math.ceil(minutes / 60)
+  return `in ${hours} hour${hours === 1 ? '' : 's'}`
+}
+
+function deriveRetryAfterSeconds(headers) {
+  const retryAfterHeader = toInt(headers?.['retry-after'])
+  if (retryAfterHeader) {
+    return retryAfterHeader
+  }
+
+  const resetUnix = toInt(headers?.['x-ratelimit-reset'] || headers?.['x-ratelimit-reset-requests'])
+  if (resetUnix) {
+    return Math.max(0, resetUnix - Math.floor(Date.now() / 1000))
+  }
+
+  return null
+}
+
 function formatStocks(stocks) {
   return stocks.slice(0, 12).map((stock) => ({
     symbol: stock.symbol,
@@ -83,6 +120,18 @@ export default async function handler(req, res) {
   } catch (error) {
     const status = error?.response?.status || 500
     const details = error?.response?.data?.error?.message || error.message
+    const headers = error?.response?.headers || {}
+    const retryAfterSeconds = deriveRetryAfterSeconds(headers)
+    const isQuotaError = status === 429 || /quota|rate limit|too many requests/i.test(String(details))
+
+    if (isQuotaError) {
+      return res.status(429).json({
+        code: 'quota_exceeded',
+        retryAfterSeconds,
+        error: `Daily limit reached. Please retry ${formatRetryWindow(retryAfterSeconds)}.`
+      })
+    }
+
     return res.status(status).json({ error: `AI request failed: ${details}` })
   }
 }

@@ -121,11 +121,11 @@ export default function FilterPanel({ filters, setFilters, sectors = [], onRun, 
           scrollbar-gutter: stable;
         }
         h2 { margin-top: 0; font-size: 18px; }
-        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 18px; align-content: start; }
+        .filter-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-content: start; }
         .filter-card { padding: 16px; border-radius: 16px; background: #fff; border: 1px solid rgba(0,0,0,0.05); }
         .card-label { display: block; font-weight: 600; margin-bottom: 10px; font-size: 13px; color: #444; }
-        .two-inputs { display: flex; gap: 10px; align-items: center; }
-        .two-inputs input { flex: 1; padding: 8px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.15); }
+        .two-inputs { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 10px; align-items: center; }
+        .two-inputs input { width: 100%; min-width: 0; padding: 8px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.15); }
         .sep { font-size: 18px; color: #666; }
         .card-foot { margin-top: 10px; font-size: 12px; color: #666; }
         input[type=range] { width: 100%; }

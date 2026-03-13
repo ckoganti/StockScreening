@@ -86,7 +86,13 @@ export default function Home() {
       setAiSummary(response.data.summary)
       setAiModel(response.data.model)
     } catch (err) {
-      const message = err?.response?.data?.error || 'Unable to generate AI insights'
+      const data = err?.response?.data || {}
+      const retryAfterSeconds = data.retryAfterSeconds
+      const retryMinutes = retryAfterSeconds ? Math.ceil(retryAfterSeconds / 60) : null
+      const message = data.code === 'quota_exceeded'
+        ? `Daily limit reached for AI insights. ${retryMinutes ? `Try again in about ${retryMinutes} minute${retryMinutes === 1 ? '' : 's'}.` : 'Please try again later.'}`
+        : (data.error || 'Unable to generate AI insights')
+      setAiSummary('')
       setAiError(message)
     } finally {
       setAiLoading(false)
