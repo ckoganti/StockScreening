@@ -1,18 +1,19 @@
 .scanBtn {
   width: 100%;
   padding: 12px;
-  border-radius: 18px;
+  border-radius: 12px;
   border: none;
-  background: linear-gradient(90deg, #223344, #446688);
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
   color: #fff;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 120ms ease;
+  transition: transform 120ms ease, opacity 120ms ease;
   margin-top: 16px;
 }
 
 .scanBtn:hover:not(:disabled) {
-  opacity: 0.95;
+  opacity: 0.96;
+  transform: translateY(-1px);
 }
 
 .scanBtn:disabled {

@@ -9,6 +9,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [scanning, setScanning] = useState(false)
   const [error, setError] = useState(null)
+  const [lastUpdated, setLastUpdated] = useState(null)
   const [filters, setFilters] = useState({
     volume: [0, 100000000],
     priceRange: [0, 1000],
@@ -28,6 +29,7 @@ export default function Home() {
         const response = await axios.get('/api/stocks')
         setAllStocks(response.data)
         setStocks(response.data)
+        setLastUpdated(new Date())
       } catch (err) {
         console.error('Error fetching stocks:', err)
         setError('Failed to load stock data. Please check your API key configuration.')
@@ -74,12 +76,22 @@ export default function Home() {
     }
   }, [filters, allStocks])
 
-  if (loading) return <div>Loading...</div>
   if (error) return <div>Error: {error}</div>
 
   return (
     <div className="container">
-      <h1>Stock screening</h1>
+      <header className="page-header">
+        <div>
+          <h1>Stock Screening</h1>
+          <p className="subtitle">Intraday filter workspace with sortable market signals</p>
+        </div>
+        <div className="meta-card">
+          <span>Data source: Alpha Vantage</span>
+          <span>
+            Last updated: {lastUpdated ? lastUpdated.toLocaleTimeString() : 'loading...'}
+          </span>
+        </div>
+      </header>
       <div className="layout">
         <FilterPanel
           filters={filters}
@@ -88,7 +100,7 @@ export default function Home() {
           onRun={runScan}
           scanning={scanning}
         />
-        <StockTable stocks={stocks} />
+        <StockTable stocks={stocks} loading={loading || scanning} />
       </div>
     </div>
   )

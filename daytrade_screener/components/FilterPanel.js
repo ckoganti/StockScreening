@@ -104,23 +104,7 @@ export default function FilterPanel({ filters, setFilters, sectors = [], onRun, 
           </select>
         </div>
 
-        <div className="filter-card">
-          <label className="card-label">IPO Date Range</label>
-          <div className="two-inputs">
-            <input
-              type="date"
-              value={filters.dateRange[0]}
-              onChange={(e) => updateFilter('dateRange', [e.target.value, filters.dateRange[1]])}
-            />
-            <span className="sep">–</span>
-            <input
-              type="date"
-              value={filters.dateRange[1]}
-              onChange={(e) => updateFilter('dateRange', [filters.dateRange[0], e.target.value])}
-            />
-          </div>
-        </div>
-        <button className={styles.scanBtn} onClick={onRun} disabled={scanning}>
+         <button className={styles.scanBtn} onClick={onRun} disabled={scanning}>
           {scanning ? '// scanning market...' : '▶ run screening scan'}
         </button>
       </div>

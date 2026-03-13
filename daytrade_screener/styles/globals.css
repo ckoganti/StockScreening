@@ -2,8 +2,24 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", sans-serif;
+  background: radial-gradient(circle at 20% 10%, #e9f3ff 0%, #f6f8fb 38%, #f8fafc 100%);
+  color: var(--ink-900);
+}
+
+:root {
+  --ink-900: #12232f;
+  --ink-700: #2f495a;
+  --ink-500: #5d7482;
+  --surface: #ffffff;
+  --surface-soft: #f5f9fc;
+  --line: #d6e3ec;
+  --accent: #0ea5a4;
+  --accent-strong: #087d7c;
+  --buy: #1a9b52;
+  --sell: #e14f49;
+  --hold: #6b7280;
+  --shadow: 0 14px 36px rgba(18, 35, 47, 0.08);
 }
 
 a {
@@ -16,21 +32,61 @@ a {
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1380px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: -0.03em;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  color: var(--ink-500);
+  font-size: 0.96rem;
+}
+
+.meta-card {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: var(--ink-700);
+  font-size: 0.86rem;
 }
 
 .layout {
   display: flex;
-  gap: 20px;
+  gap: 18px;
+  align-items: flex-start;
 }
 
 .filter-panel {
   width: 300px;
+  min-width: 300px;
+  max-height: calc(100vh - 32px);
+  position: sticky;
+  top: 16px;
+  overflow: auto;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-soft);
+  box-shadow: var(--shadow);
 }
 
 .filter-group {
@@ -49,6 +105,28 @@ a {
 
 .stock-table {
   flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.table-header h2 {
+  margin: 0;
+}
+
+.table-count {
+  color: var(--ink-500);
+  font-size: 0.9rem;
 }
 
 .stock-table table {
@@ -58,11 +136,112 @@ a {
 
 .stock-table th,
 .stock-table td {
-  border: 1px solid #ccc;
-  padding: 8px;
+  border-bottom: 1px solid var(--line);
+  padding: 12px 10px;
   text-align: left;
+  font-size: 0.92rem;
 }
 
 .stock-table th {
-  background-color: #f4f4f4;
+  background-color: #ecf4fb;
+  color: var(--ink-700);
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.sort-btn {
+  border: none;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+}
+
+.signal-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 54px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
+.signal-buy {
+  background: var(--buy);
+}
+
+.signal-sell {
+  background: var(--sell);
+}
+
+.signal-hold {
+  background: var(--hold);
+}
+
+.chart-placeholder {
+  color: var(--ink-500);
+  font-size: 0.84rem;
+}
+
+.table-skeleton {
+  padding: 18px;
+}
+
+.skeleton-row {
+  height: 44px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #edf3f8 25%, #dce8f1 40%, #edf3f8 60%);
+  background-size: 220% 100%;
+  animation: shimmer 1.3s infinite;
+}
+
+.table-empty {
+  margin: 22px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  background: #f8fcff;
+  padding: 26px;
+}
+
+.table-empty h3 {
+  margin: 0 0 6px;
+}
+
+.table-empty p {
+  margin: 0;
+  color: var(--ink-500);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -20% 0;
+  }
+}
+
+@media (max-width: 980px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .filter-panel {
+    width: 100%;
+    max-height: none;
+    position: static;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
