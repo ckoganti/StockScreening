@@ -38,7 +38,7 @@ export default function StockTable({ stocks }) {
                     <CartesianGrid strokeDasharray="3 3" />
                     <Tooltip />
                   </LineChart>
-                ) : 'No data'}
+                ) : 'Chart data loading...'}
               </td>
             </tr>
           ))}

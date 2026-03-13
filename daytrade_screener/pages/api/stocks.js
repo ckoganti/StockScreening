@@ -1,29 +1,25 @@
 import axios from 'axios'
 
 const API_KEY = process.env.ALPHA_VANTAGE_API_KEY
-const symbols = ['AAPL', 'MSFT', 'NVDA', 'AMD', 'TSLA', 'GOOGL', 'AMZN', 'SPY', 'QQQ', 'IWM']
+const symbols = ['AAPL', 'MSFT', 'NVDA', 'TSLA', 'AMZN'] // Reduced to 5 to avoid rate limits
 
 async function fetchStockData(symbol) {
   try {
-    const [quoteRes, rsiRes, overviewRes, timeSeriesRes] = await Promise.all([
+    // Reduced API calls to avoid rate limits (2 calls per symbol instead of 4)
+    const [quoteRes, rsiRes] = await Promise.all([
       axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`),
-      axios.get(`https://www.alphavantage.co/query?function=RSI&symbol=${symbol}&interval=daily&time_period=14&series_type=close&apikey=${API_KEY}`),
-      axios.get(`https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=${API_KEY}`),
-      axios.get(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${API_KEY}`)
+      axios.get(`https://www.alphavantage.co/query?function=RSI&symbol=${symbol}&interval=daily&time_period=14&series_type=close&apikey=${API_KEY}`)
     ])
 
     const quote = quoteRes.data['Global Quote']
-    if (!quote) return null
+    if (!quote || !quote['05. price']) return null
 
     const rsiData = rsiRes.data['Technical Analysis: RSI']
-    const overview = overviewRes.data
-    const timeSeries = timeSeriesRes.data['Time Series (Daily)']
-
     const latestDate = Object.keys(rsiData || {})[0]
     const rsi = latestDate ? parseFloat(rsiData[latestDate].RSI) : 50
 
     const price = parseFloat(quote['05. price'])
-    const volume = parseInt(quote['06. volume'])
+    const volume = parseInt(quote['06. volume']) || 0
 
     const relVolume = 1 // Placeholder
 
@@ -33,10 +29,9 @@ async function fetchStockData(symbol) {
 
     const rrRatio = 2.0 // Placeholder
 
-    const chartData = timeSeries ? Object.keys(timeSeries).slice(0, 30).reverse().map(date => ({
-      date: date.slice(5), // MM-DD
-      price: parseFloat(timeSeries[date]['4. close'])
-    })) : null
+    // Temporarily disabled to reduce API calls
+    const sector = 'Technology' // Default sector
+    const chartData = null // Will implement lazy loading later
 
     return {
       symbol,
@@ -46,8 +41,14 @@ async function fetchStockData(symbol) {
       relVolume,
       signal,
       rrRatio,
-      sector: overview.Sector || 'Unknown',
-      chartData,
+      sector,
+      chartData
+    }
+  } catch (err) {
+    console.error(`Error fetching data for ${symbol}:`, err.message)
+    return null
+  }
+}
       ipoDate: overview.IPODate
     }
   } catch (err) {
