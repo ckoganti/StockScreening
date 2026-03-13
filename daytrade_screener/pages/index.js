@@ -7,6 +7,7 @@ export default function Home() {
   const [stocks, setStocks] = useState([])
   const [allStocks, setAllStocks] = useState([])
   const [loading, setLoading] = useState(true)
+  const [scanning, setScanning] = useState(false)
   const [error, setError] = useState(null)
   const [filters, setFilters] = useState({
     volume: [0, 100000000],
@@ -59,6 +60,14 @@ export default function Home() {
     setStocks(filtered)
   }
 
+  const runScan = async () => {
+    setScanning(true)
+    applyFilters()
+    // Simulate a small scan delay for UI feedback
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    setScanning(false)
+  }
+
   useEffect(() => {
     if (allStocks.length > 0) {
       applyFilters()
@@ -70,9 +79,15 @@ export default function Home() {
 
   return (
     <div className="container">
-      <h1>DayTrade Screener</h1>
+      <h1>Stock screening</h1>
       <div className="layout">
-        <FilterPanel filters={filters} setFilters={setFilters} sectors={[...new Set(allStocks.map(s => s.sector))]} />
+        <FilterPanel
+          filters={filters}
+          setFilters={setFilters}
+          sectors={[...new Set(allStocks.map(s => s.sector))]}
+          onRun={runScan}
+          scanning={scanning}
+        />
         <StockTable stocks={stocks} />
       </div>
     </div>

@@ -1,0 +1,21 @@
+.scanBtn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 18px;
+  border: none;
+  background: linear-gradient(90deg, #223344, #446688);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 120ms ease;
+  margin-top: 16px;
+}
+
+.scanBtn:hover:not(:disabled) {
+  opacity: 0.95;
+}
+
+.scanBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

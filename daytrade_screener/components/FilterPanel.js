@@ -1,4 +1,6 @@
-export default function FilterPanel({ filters, setFilters, sectors = [] }) {
+import styles from './FilterPanel.module.css'
+
+export default function FilterPanel({ filters, setFilters, sectors = [], onRun, scanning }) {
   const updateFilter = (key, value) => {
     setFilters({ ...filters, [key]: value })
   }
@@ -118,10 +120,13 @@ export default function FilterPanel({ filters, setFilters, sectors = [] }) {
             />
           </div>
         </div>
+        <button className={styles.scanBtn} onClick={onRun} disabled={scanning}>
+          {scanning ? '// scanning market...' : '▶ run screening scan'}
+        </button>
       </div>
 
       <style jsx>{`
-        .filter-panel { padding: 20px; border-radius: 18px; background: #f6f6f2; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+        .filter-panel { padding: 20px; border-radius: 18px; background: #f6f6f2; box-shadow: 0 6px 20px rgba(0,0,0,0.08); overflow: hidden; }
         h2 { margin-top: 0; font-size: 18px; }
         .filter-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 18px; }
         .filter-card { padding: 16px; border-radius: 16px; background: #fff; border: 1px solid rgba(0,0,0,0.05); }
@@ -132,8 +137,6 @@ export default function FilterPanel({ filters, setFilters, sectors = [] }) {
         .card-foot { margin-top: 10px; font-size: 12px; color: #666; }
         input[type=range] { width: 100%; }
         select { width: 100%; padding: 8px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.15); }
-        .run-btn { margin-top: 18px; width: 100%; padding: 12px; border-radius: 18px; border: none; background: linear-gradient(90deg,#223344,#446688); color: white; font-weight: 700; cursor: pointer; }
-        .run-btn:hover { opacity: 0.95; }
       `}</style>
     </div>
   )
