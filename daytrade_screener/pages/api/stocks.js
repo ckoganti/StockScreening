@@ -49,13 +49,6 @@ async function fetchStockData(symbol) {
     return null
   }
 }
-      ipoDate: overview.IPODate
-    }
-  } catch (err) {
-    console.error(`Error fetching data for ${symbol}:`, err)
-    return null
-  }
-}
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
